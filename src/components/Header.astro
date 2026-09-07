@@ -1,0 +1,56 @@
+---
+const links = [
+  { href: '#features', label: 'Funcionalidades' },
+  { href: '#precios', label: 'Precios' },
+  { href: '#contacto', label: 'Contacto' },
+];
+---
+<header class="header">
+  <nav class="container nav">
+    <a href="#inicio" class="brand">
+      <img src="/images/logo.png" alt="Vendeto" class="brand-logo" />
+    </a>
+    <ul class="nav-links">
+      {links.map((l) => (
+        <li><a href={l.href}>{l.label}</a></li>
+      ))}
+    </ul>
+    <a href="#contacto" class="btn btn-primary nav-cta">Solicitar demo</a>
+  </nav>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--ink-100);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+  }
+  .brand-logo {
+    height: 40px;
+    width: auto;
+    display: block;
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--ink-700);
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  .nav-links a:hover { color: var(--blue-600); }
+  @media (max-width: 720px) {
+    .nav-links { display: none; }
+  }
+</style>

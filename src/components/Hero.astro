@@ -1,0 +1,90 @@
+---
+const stats = [
+  { value: '19+', label: 'Módulos de gestión' },
+  { value: '100%', label: 'Stock controlado en backend' },
+  { value: 'Multi-sucursal', label: 'Empresas y locales' },
+  { value: 'Offline-ready', label: 'Ventas sin conexión' },
+];
+---
+<section id="inicio" class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow">Punto de Venta · Gestión Integral</span>
+      <h1 class="hero-title">
+        Vendé más, <span class="accent">controlá todo</span> tu comercio
+      </h1>
+      <p class="hero-sub">
+        Vendeto es un sistema de punto de venta (POS) pensado para comercios
+        minoristas. Ventas, stock, clientes, cajas y deudas en una sola plataforma,
+        rápida y fácil de usar.
+      </p>
+      <div class="hero-actions">
+        <a href="#contacto" class="btn btn-primary">Empezar gratis</a>
+        <a href="#features" class="btn btn-ghost">Conocer funcionalidades</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="/images/logo-miniaturas.png" alt="Vendeto en acción" class="hero-shot" loading="eager" />
+    </div>
+  </div>
+  <div class="container stats">
+    {stats.map((s) => (
+      <div class="stat">
+        <div class="stat-value">{s.value}</div>
+        <div class="stat-label">{s.label}</div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .hero { padding-top: 72px; }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .hero-title {
+    font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+    font-weight: 800;
+    margin-bottom: 20px;
+  }
+  .accent {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--ink-500);
+    margin-bottom: 32px;
+  }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .hero-visual { position: relative; }
+  .hero-shot {
+    width: 100%;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--ink-100);
+  }
+  .stats {
+    margin-top: 80px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    padding-bottom: 96px;
+    border-bottom: 1px solid var(--ink-100);
+  }
+  .stat-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--blue-600);
+  }
+  .stat-label { color: var(--ink-500); font-size: 0.9rem; }
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .stats { grid-template-columns: repeat(2, 1fr); padding-bottom: 64px; }
+  }
+</style>

@@ -1,0 +1,112 @@
+---
+const plans = [
+  {
+    name: 'Básico',
+    price: 'Gratis',
+    per: 'para empezar',
+    desc: 'Para comercios que arrancan y necesitan lo esencial.',
+    features: ['Ventas y cobros', 'Productos y categorías', 'Hasta 2 usuarios', '1 sucursal', 'Soporte por email'],
+    featured: false,
+  },
+  {
+    name: 'Premium',
+    price: '$12',
+    per: '/mes por sucursal',
+    desc: 'El plan más elegido para comercios en crecimiento.',
+    features: ['Todo lo del plan Básico', 'Control de stock completo', 'Clientes y cuentas corrientes', 'Compras y proveedores', 'Apertura y cierre de caja', 'Multi-sucursal', 'Soporte prioritario'],
+    featured: true,
+  },
+  {
+    name: 'Empresa',
+    price: 'A medida',
+    per: 'para cadenas',
+    desc: 'Para negocios con múltiples locales y operaciones complejas.',
+    features: ['Todo lo del plan Premium', 'Usuarios ilimitados', 'Sucursales ilimitadas', 'Reportes avanzados', 'Onboarding dedicado', 'SLA garantizado'],
+    featured: false,
+  },
+];
+---
+<section id="precios" class="section pricing">
+  <div class="container">
+    <div class="center">
+      <span class="eyebrow">Planes</span>
+      <h2 class="section-title">Precios simples y flexibles</h2>
+      <p class="section-sub">
+        Empezá gratis y escalá cuando tu comercio crezca. Sin costos ocultos.
+      </p>
+    </div>
+
+    <div class="plans">
+      {plans.map((p) => (
+        <article class:list={['plan', { featured: p.featured }]}>
+          <h3 class="plan-name">{p.name}</h3>
+          <div class="plan-price">
+            <span class="amount">{p.price}</span>
+            <span class="per">{p.per}</span>
+          </div>
+          <p class="plan-desc">{p.desc}</p>
+          <ul class="plan-features">
+            {p.features.map((f) => (
+              <li>✓ {f}</li>
+            ))}
+          </ul>
+          <a href="#contacto" class:list={['btn', p.featured ? 'btn-primary' : 'btn-ghost', 'plan-btn']}>
+            {p.featured ? 'Elegir Premium' : 'Solicitar'}
+          </a>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .pricing { background: var(--ink-50); }
+  .plans {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: stretch;
+  }
+  .plan {
+    background: var(--white);
+    border: 1px solid var(--ink-100);
+    border-radius: var(--radius);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+  }
+  .plan.featured {
+    border: 2px solid var(--blue-600);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+  }
+  .plan.featured::before {
+    content: 'Más popular';
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--grad);
+    color: var(--white);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 5px 16px;
+    border-radius: 999px;
+    letter-spacing: 0.03em;
+  }
+  .plan-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; }
+  .plan-price { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
+  .amount { font-size: 2.4rem; font-weight: 800; }
+  .per { color: var(--ink-500); font-size: 0.9rem; }
+  .plan-desc { color: var(--ink-500); font-size: 0.9rem; margin-bottom: 20px; }
+  .plan-features { list-style: none; margin-bottom: 28px; flex: 1; }
+  .plan-features li {
+    padding: 7px 0;
+    color: var(--ink-700);
+    font-size: 0.95rem;
+  }
+  .plan-btn { width: 100%; }
+  @media (max-width: 900px) { .plans { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; } }
+</style>

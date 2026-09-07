@@ -1,0 +1,61 @@
+---
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <img src="/images/logo.png" alt="Vendeto" class="footer-logo" />
+      <p class="footer-desc">
+        Sistema de punto de venta (POS) para comercios minoristas.
+        Ventas, stock, clientes, cajas y deudas en un solo lugar.
+      </p>
+    </div>
+    <div>
+      <h4>Producto</h4>
+      <ul>
+        <li><a href="#features">Funcionalidades</a></li>
+        <li><a href="#precios">Precios</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contacto</h4>
+      <ul>
+        <li><a href="mailto:hola@vendeto.app">hola@vendeto.app</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    © {year} Vendeto. Todos los derechos reservados.
+  </div>
+</footer>
+
+<style>
+  .footer { background: var(--ink-900); color: var(--ink-100); padding: 64px 0 0; }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 40px;
+    padding-bottom: 48px;
+  }
+  .footer-logo {
+    height: 40px;
+    width: auto;
+    background: var(--white);
+    border-radius: 10px;
+    padding: 6px;
+    margin-bottom: 16px;
+  }
+  .footer-desc { color: var(--ink-500); font-size: 0.9rem; max-width: 300px; }
+  .footer h4 { color: var(--white); font-size: 0.95rem; margin-bottom: 16px; }
+  .footer ul { list-style: none; }
+  .footer li { margin-bottom: 10px; }
+  .footer li a { color: var(--ink-500); font-size: 0.9rem; }
+  .footer li a:hover { color: var(--white); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 24px 0;
+    color: var(--ink-500);
+    font-size: 0.85rem;
+  }
+  @media (max-width: 720px) { .footer-grid { grid-template-columns: 1fr; } }
+</style>

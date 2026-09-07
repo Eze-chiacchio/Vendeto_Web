@@ -1,0 +1,121 @@
+---
+const features = [
+  {
+    icon: '💳',
+    title: 'Ventas rápidas',
+    desc: 'Cobrá en segundos con soporte para múltiples medios de pago: efectivo, débito, crédito, transferencia y QR.',
+  },
+  {
+    icon: '📦',
+    title: 'Control de stock',
+    desc: 'Gestioná el inventario por producto y sucursal. El descuento de stock se valida siempre en el backend.',
+  },
+  {
+    icon: '🏷️',
+    title: 'Productos y categorías',
+    desc: 'Catálogo con código de barras, unidades de medida (unidad, kilo, litro) y categorías jerárquicas.',
+  },
+  {
+    icon: '👥',
+    title: 'Clientes y deudas',
+    desc: 'Registrá clientes con documento y llevá cuentas corrientes. Vendé a plazo y controlá los saldos.',
+  },
+  {
+    icon: '🛒',
+    title: 'Compras y proveedores',
+    desc: 'Registrá órdenes de compra y el detalle de cada una para mantener un stock siempre actualizado.',
+  },
+  {
+    icon: '💰',
+    title: 'Cajas y gastos',
+    desc: 'Abrí y cerrá caja, registrá gastos y controlá los montos recibidos con total transparencia.',
+  },
+  {
+    icon: '🏬',
+    title: 'Multi-sucursal',
+    desc: 'Una empresa con varios locales. Cada sucursal maneja su propio stock y su propia operación.',
+  },
+  {
+    icon: '🔒',
+    title: 'Roles y seguridad',
+    desc: 'Usuarios con permisos (admin, vendedores). Autenticación con JWT y contraseñas encriptadas.',
+  },
+];
+
+const flow = ['Venta', 'Compra', 'Caja', 'Stock', 'Cliente', 'Deuda'];
+---
+<section id="features" class="section">
+  <div class="container">
+    <div class="center">
+      <span class="eyebrow">Funcionalidades</span>
+      <h2 class="section-title">Todo lo que tu comercio necesita</h2>
+      <p class="section-sub">
+        Vendeto cubre el ciclo completo de un negocio minorista con módulos
+        integrados que trabajan en conjunto.
+      </p>
+    </div>
+
+    <div class="grid">
+      {features.map((f) => (
+        <article class="card">
+          <div class="card-icon">{f.icon}</div>
+          <h3 class="card-title">{f.title}</h3>
+          <p class="card-desc">{f.desc}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="flow">
+      <span class="eyebrow">Flujo completo</span>
+      <h3 class="flow-title">Un sistema, todas las áreas</h3>
+      <div class="flow-chips">
+        {flow.map((f) => (
+          <span class="chip">{f}</span>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .card {
+    background: var(--white);
+    border: 1px solid var(--ink-100);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .card-icon { font-size: 1.8rem; margin-bottom: 14px; }
+  .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+  .card-desc { color: var(--ink-500); font-size: 0.92rem; }
+
+  .flow {
+    margin-top: 80px;
+    text-align: center;
+    background: var(--ink-50);
+    border: 1px solid var(--ink-100);
+    border-radius: var(--radius);
+    padding: 48px 24px;
+  }
+  .flow-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 24px; }
+  .flow-chips { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .chip {
+    background: var(--grad);
+    color: var(--white);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 8px 20px;
+    border-radius: 999px;
+  }
+
+  @media (max-width: 1000px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+</style>
