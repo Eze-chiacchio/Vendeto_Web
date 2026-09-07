@@ -1,28 +1,28 @@
 ---
 const plans = [
   {
-    name: 'Básico',
+    name: 'Gratuita',
     price: 'Gratis',
-    per: 'para empezar',
+    per: '7 días de prueba',
+    desc: 'Probá Vendeto con todo el nivel máximo durante una semana.',
+    features: ['Nivel máximo por 1 semana', 'Todas las funcionalidades', 'Acceso completo sin límites', 'Sin tarjeta de crédito'],
+    featured: false,
+  },
+  {
+    name: 'Básica',
+    price: 'A consultar',
+    per: '/ mes',
     desc: 'Para comercios que arrancan y necesitan lo esencial.',
-    features: ['Ventas y cobros', 'Productos y categorías', 'Hasta 2 usuarios', '1 sucursal', 'Soporte por email'],
+    features: ['Hasta 3 usuarios totales', 'Ventas y cobros', 'Productos y categorías', 'Control de stock', 'Soporte por email'],
     featured: false,
   },
   {
-    name: 'Premium',
-    price: '$12',
-    per: '/mes por sucursal',
-    desc: 'El plan más elegido para comercios en crecimiento.',
-    features: ['Todo lo del plan Básico', 'Control de stock completo', 'Clientes y cuentas corrientes', 'Compras y proveedores', 'Apertura y cierre de caja', 'Multi-sucursal', 'Soporte prioritario'],
+    name: 'Máxima',
+    price: 'A consultar',
+    per: '/ mes',
+    desc: 'Todo el poder de Vendeto, sin límites y con integraciones.',
+    features: ['Usuarios sin límite', 'Integración con MercadoPago', 'Integración con AFIP', 'Integración con Mercado Libre', 'Integración con Pedidos Ya'],
     featured: true,
-  },
-  {
-    name: 'Empresa',
-    price: 'A medida',
-    per: 'para cadenas',
-    desc: 'Para negocios con múltiples locales y operaciones complejas.',
-    features: ['Todo lo del plan Premium', 'Usuarios ilimitados', 'Sucursales ilimitadas', 'Reportes avanzados', 'Onboarding dedicado', 'SLA garantizado'],
-    featured: false,
   },
 ];
 ---
@@ -50,8 +50,8 @@ const plans = [
               <li>✓ {f}</li>
             ))}
           </ul>
-          <a href="#contacto" class:list={['btn', p.featured ? 'btn-primary' : 'btn-ghost', 'plan-btn']}>
-            {p.featured ? 'Elegir Premium' : 'Solicitar'}
+          <a href="/api/latest?download=1" class:list={['btn', p.featured ? 'btn-primary' : 'btn-ghost', 'plan-btn']}>
+            Descargar
           </a>
         </article>
       ))}
