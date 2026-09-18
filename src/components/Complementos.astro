@@ -1,0 +1,64 @@
+---
+const addons = [
+  {
+    icon: '📷',
+    name: 'Barcode Scanner',
+    desc: 'Complemento de Vendeto que permite usar el celular como lector de códigos de barras.',
+    url: 'https://drive.google.com/uc?export=download&id=14uXG1XVASh58nyyJ4O2YXnXX02ufwQL4',
+  },
+  {
+    icon: '🔍',
+    name: 'Consulta Producto',
+    desc: 'Complemento de Vendeto que permite consultar el stock, costo de venta y costo de compra desde el celular.',
+    url: 'https://drive.google.com/uc?export=download&id=13z_AEyZw55spJuHBWIu0eCEIAXm9pUz7',
+  },
+];
+---
+<section id="complementos" class="section">
+  <div class="container">
+    <div class="center">
+      <span class="eyebrow">Complementos</span>
+      <h2 class="section-title">Extendé las capacidades de Vendeto</h2>
+      <p class="section-sub">
+        Descargá los programas complementarios para potenciar tu punto de venta.
+      </p>
+    </div>
+
+    <div class="addons">
+      {addons.map((a) => (
+        <article class="addon-card">
+          <div class="addon-icon">{a.icon}</div>
+          <h3 class="addon-name">{a.name}</h3>
+          <p class="addon-desc">{a.desc}</p>
+          <a href={a.url} class="btn btn-primary addon-btn" target="_blank" rel="noopener">
+            Descargar
+          </a>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .addons {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .addon-card {
+    background: var(--white);
+    border: 1px solid var(--ink-100);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .addon-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .addon-icon { font-size: 2.2rem; margin-bottom: 14px; }
+  .addon-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .addon-desc { color: var(--ink-500); font-size: 0.95rem; margin-bottom: 24px; }
+  .addon-btn { width: 100%; }
+  @media (max-width: 720px) { .addons { grid-template-columns: 1fr; } }
+</style>
