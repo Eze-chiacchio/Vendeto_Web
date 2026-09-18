@@ -1,27 +1,36 @@
 ---
 const plans = [
   {
+    icon: '🌱',
     name: 'Gratuito',
+    tag: 'Ideal para probar',
     price: '$0',
     per: 'al vencer la prueba',
-    desc: 'Para seguir usando Vendeto gratis cuando termina el período de prueba.',
-    features: ['Seguimiento de ventas, caja y stock', '1 usuario permitido', 'Hasta 500 productos', 'Sin deudas, compras ni gastos'],
+    desc: 'Seguí usando Vendeto gratis, con lo esencial para tu día a día.',
+    features: ['Seguimiento de ventas, caja y stock', 'Un solo usuario con acceso completo', 'Hasta 500 productos'],
+    cta: 'Empezar gratis',
     featured: false,
   },
   {
+    icon: '🚀',
     name: 'Básico',
+    tag: 'El más elegido',
     price: '$32.500',
     per: '/ mes',
-    desc: 'Para comercios que arrancan y necesitan todos los módulos.',
-    features: ['3 usuarios permitidos', 'Hasta 1000 productos', 'Todos los módulos activados', 'Soporte por email'],
+    desc: 'Para comercios que arrancan y necesitan todas las funciones.',
+    features: ['3 usuarios trabajando en equipo', 'Hasta 1000 productos', 'Todos los módulos activados', 'Soporte por email y WhatsApp'],
+    cta: 'Elegir Básico',
     featured: false,
   },
   {
+    icon: '👑',
     name: 'Avanzado',
+    tag: 'El más completo',
     price: '$39.990',
     per: '/ mes',
     desc: 'Todo el poder de Vendeto, sin límites de usuarios ni de productos.',
-    features: ['Usuarios ilimitados', 'Hasta 10000 productos', 'Integración con MercadoPago para verificar compras al instante', 'Soporte prioritario por email'],
+    features: ['Usuarios ilimitados', 'Hasta 10000 productos', 'Integración con MercadoPago para verificar compras al instante', 'Soporte prioritario por email y WhatsApp'],
+    cta: 'Elegir Avanzado',
     featured: true,
   },
 ];
@@ -44,19 +53,22 @@ const plans = [
     <div class="plans">
       {plans.map((p) => (
         <article class:list={['plan', { featured: p.featured }]}>
+          <span class:list={['plan-tag', { 'plan-tag--featured': p.featured }]}>{p.tag}</span>
+          <div class="plan-icon">{p.icon}</div>
           <h3 class="plan-name">{p.name}</h3>
+          <p class="plan-desc">{p.desc}</p>
           <div class="plan-price">
             <span class="amount">{p.price}</span>
             <span class="per">{p.per}</span>
           </div>
-          <p class="plan-desc">{p.desc}</p>
+          <div class="plan-divider"></div>
           <ul class="plan-features">
             {p.features.map((f) => (
-              <li>✓ {f}</li>
+              <li><span class="check">✓</span> {f}</li>
             ))}
           </ul>
           <a href="/api/latest?download=1" class:list={['btn', p.featured ? 'btn-primary' : 'btn-ghost', 'plan-btn']}>
-            Descargar
+            {p.cta}
           </a>
         </article>
       ))}
@@ -99,43 +111,60 @@ const plans = [
     align-items: stretch;
   }
   .plan {
+    position: relative;
     background: var(--white);
     border: 1px solid var(--ink-100);
     border-radius: var(--radius);
-    padding: 32px;
+    padding: 36px 32px;
     display: flex;
     flex-direction: column;
     box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
+  .plan:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
   .plan.featured {
     border: 2px solid var(--blue-600);
     box-shadow: var(--shadow-lg);
-    position: relative;
   }
-  .plan.featured::before {
-    content: 'Más popular';
-    position: absolute;
-    top: -14px;
-    left: 50%;
-    transform: translateX(-50%);
+  .plan-tag {
+    align-self: flex-start;
+    background: var(--ink-50);
+    color: var(--ink-700);
+    border: 1px solid var(--ink-100);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+  }
+  .plan-tag--featured {
     background: var(--grad);
     color: var(--white);
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 5px 16px;
-    border-radius: 999px;
-    letter-spacing: 0.03em;
+    border: none;
   }
-  .plan-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; }
+  .plan-icon { font-size: 2rem; margin-bottom: 8px; }
+  .plan-name { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+  .plan-desc { color: var(--ink-500); font-size: 0.92rem; margin-bottom: 20px; }
   .plan-price { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
-  .amount { font-size: 2.4rem; font-weight: 800; }
+  .amount { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.02em; }
+  .plan.featured .amount { color: var(--blue-600); }
   .per { color: var(--ink-500); font-size: 0.9rem; }
-  .plan-desc { color: var(--ink-500); font-size: 0.9rem; margin-bottom: 20px; }
+  .plan-divider { height: 1px; background: var(--ink-100); margin: 20px 0; }
   .plan-features { list-style: none; margin-bottom: 28px; flex: 1; }
   .plan-features li {
-    padding: 7px 0;
+    padding: 8px 0;
     color: var(--ink-700);
     font-size: 0.95rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .check {
+    color: var(--blue-600);
+    font-weight: 700;
+    flex-shrink: 0;
   }
   .plan-btn { width: 100%; }
   @media (max-width: 900px) { .plans { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; } }
