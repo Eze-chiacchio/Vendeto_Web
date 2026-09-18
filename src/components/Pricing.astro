@@ -36,6 +36,11 @@ const plans = [
       </p>
     </div>
 
+    <div class="trial-banner">
+      <span class="trial-badge">Prueba gratuita</span>
+      <p class="trial-text">Probá el plan <strong>Avanzado</strong> gratis durante 7 días.</p>
+    </div>
+
     <div class="plans">
       {plans.map((p) => (
         <article class:list={['plan', { featured: p.featured }]}>
@@ -61,8 +66,33 @@ const plans = [
 
 <style>
   .pricing { background: var(--ink-50); }
+  .trial-banner {
+    margin-top: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: var(--grad);
+    color: var(--white);
+    border-radius: var(--radius);
+    padding: 18px 24px;
+    box-shadow: var(--shadow-lg);
+  }
+  .trial-badge {
+    background: var(--white);
+    color: var(--blue-600);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 5px 14px;
+    border-radius: 999px;
+  }
+  .trial-text { font-size: 1.05rem; }
+  .trial-text strong { font-weight: 800; }
   .plans {
-    margin-top: 56px;
+    margin-top: 32px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
