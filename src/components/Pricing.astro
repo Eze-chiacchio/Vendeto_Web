@@ -104,7 +104,6 @@ const checkoutUrl = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
               type="button"
               class:list={['btn', p.featured ? 'btn-primary' : 'btn-ghost', 'plan-btn']}
               data-plan={p.key}
-              onclick="openEmailModal(this.dataset.plan)"
             >
               {p.cta}
             </button>
@@ -126,8 +125,8 @@ const checkoutUrl = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
         required
       />
       <div class="modal-actions">
-        <button type="button" class="btn btn-ghost btn-sm" onclick="closeEmailModal()">Cancelar</button>
-        <button type="button" class="btn btn-primary btn-sm" id="checkoutBtn" onclick="startCheckout()">Ir a pagar</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="cancelBtn">Cancelar</button>
+        <button type="button" class="btn btn-primary btn-sm" id="checkoutBtn">Ir a pagar</button>
       </div>
       <div class="loader hidden" id="loader">Procesando...</div>
       <div class="error hidden" id="errorMsg"></div>
@@ -136,46 +135,46 @@ const checkoutUrl = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
 </section>
 
 <script>
-  const WORKER_URL = `${'https://posweb-licensing.chiacchio-eze01.workers.dev'}`;
+  const WORKER_URL = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
+  const modal = document.getElementById('emailModal');
+  const input = document.getElementById('emailInput');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const loader = document.getElementById('loader');
+  const errorMsg = document.getElementById('errorMsg');
   let selectedPlan = '';
 
   function openEmailModal(plan) {
     selectedPlan = plan;
-    const modal = document.getElementById('emailModal');
-    const input = document.getElementById('emailInput');
     input.value = '';
-    hideError();
-    document.getElementById('loader').classList.add('hidden');
-    document.getElementById('checkoutBtn').disabled = false;
+    errorMsg.classList.add('hidden');
+    loader.classList.add('hidden');
+    checkoutBtn.disabled = false;
     modal.classList.remove('hidden');
     modal.setAttribute('aria-hidden', 'false');
     input.focus();
   }
 
   function closeEmailModal() {
-    const modal = document.getElementById('emailModal');
     modal.classList.add('hidden');
     modal.setAttribute('aria-hidden', 'true');
   }
 
   function showError(msg) {
-    const el = document.getElementById('errorMsg');
-    el.textContent = msg;
-    el.classList.remove('hidden');
+    errorMsg.textContent = msg;
+    errorMsg.classList.remove('hidden');
   }
 
   function hideError() {
-    document.getElementById('errorMsg').classList.add('hidden');
+    errorMsg.classList.add('hidden');
   }
 
   async function startCheckout() {
-    const email = document.getElementById('emailInput').value.trim();
+    const email = input.value.trim();
     if (!email) { showError('Ingresá tu email'); return; }
     if (!email.includes('@') || !email.includes('.')) { showError('Ingresá un email válido'); return; }
 
-    const btn = document.getElementById('checkoutBtn');
-    const loader = document.getElementById('loader');
-    btn.disabled = true;
+    checkoutBtn.disabled = true;
     loader.classList.remove('hidden');
     hideError();
 
@@ -194,13 +193,21 @@ const checkoutUrl = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
       }
     } catch (err) {
       showError(err.message || 'Error de conexión');
-      btn.disabled = false;
+      checkoutBtn.disabled = false;
       loader.classList.add('hidden');
     }
   }
 
-  document.getElementById('emailInput').addEventListener('keydown', (e) => {
+  document.querySelectorAll('[data-plan]').forEach((btn) => {
+    btn.addEventListener('click', () => openEmailModal(btn.dataset.plan));
+  });
+  checkoutBtn.addEventListener('click', startCheckout);
+  cancelBtn.addEventListener('click', closeEmailModal);
+  input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') startCheckout();
+  });
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeEmailModal();
   });
 </script>
 
