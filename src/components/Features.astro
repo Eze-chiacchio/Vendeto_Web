@@ -41,8 +41,6 @@ const features = [
     desc: 'Usuarios con permisos (admin, vendedores). Autenticación con JWT y contraseñas encriptadas.',
   },
 ];
-
-const flow = ['Venta', 'Compra', 'Caja', 'Stock', 'Cliente', 'Deuda'];
 ---
 <section id="features" class="section">
   <div class="container">
@@ -63,16 +61,6 @@ const flow = ['Venta', 'Compra', 'Caja', 'Stock', 'Cliente', 'Deuda'];
           <p class="card-desc">{f.desc}</p>
         </article>
       ))}
-    </div>
-
-    <div class="flow">
-      <span class="eyebrow">Flujo completo</span>
-      <h3 class="flow-title">Un sistema, todas las áreas</h3>
-      <div class="flow-chips">
-        {flow.map((f) => (
-          <span class="chip">{f}</span>
-        ))}
-      </div>
     </div>
   </div>
 </section>
@@ -96,25 +84,6 @@ const flow = ['Venta', 'Compra', 'Caja', 'Stock', 'Cliente', 'Deuda'];
   .card-icon { font-size: 1.8rem; margin-bottom: 14px; }
   .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
   .card-desc { color: var(--ink-500); font-size: 0.92rem; }
-
-  .flow {
-    margin-top: 80px;
-    text-align: center;
-    background: var(--ink-50);
-    border: 1px solid var(--ink-100);
-    border-radius: var(--radius);
-    padding: 48px 24px;
-  }
-  .flow-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 24px; }
-  .flow-chips { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-  .chip {
-    background: var(--grad);
-    color: var(--white);
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 8px 20px;
-    border-radius: 999px;
-  }
 
   @media (max-width: 1000px) { .grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
