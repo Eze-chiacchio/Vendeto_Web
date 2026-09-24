@@ -1,0 +1,302 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+const planParam = (Astro.url.searchParams.get('plan') ?? '').toLowerCase();
+const plans = [
+  {
+    name: 'Básico',
+    key: 'basica',
+    tag: 'El más elegido',
+    price: '$32.500',
+    per: '/ mes',
+    desc: 'Para comercios que arrancan y necesitan todas las funciones.',
+    features: [
+      { strong: 'Hasta 3 usuarios', text: ' trabajando en equipo' },
+      { strong: 'Hasta 1.000 productos', text: ' en catálogo' },
+      { text: 'Todos los módulos activados' },
+      { text: 'Soporte por email y WhatsApp' },
+    ],
+    cta: 'Renovar Básico',
+    featured: false,
+  },
+  {
+    name: 'Avanzado',
+    key: 'maxima',
+    tag: 'El más completo',
+    price: '$39.990',
+    per: '/ mes',
+    desc: 'Todo el poder de Vendeto, sin límites de usuarios ni de productos.',
+    features: [
+      { strong: 'Usuarios ilimitados' },
+      { strong: 'Hasta 10.000 productos', text: ' en catálogo' },
+      { text: 'Verificación instantánea de pagos con Mercado Pago' },
+      { text: 'Soporte prioritario por email y WhatsApp' },
+    ],
+    cta: 'Renovar Avanzado',
+    featured: true,
+  },
+];
+const highlighted = plans.find((p) => p.key === planParam)?.key ?? 'maxima';
+---
+<BaseLayout
+  title="Renová tu licencia — Vendeto"
+  description="Renová tu licencia de Vendeto para seguir usando el sistema sin interrupciones."
+>
+  <Header />
+  <main>
+    <section id="renovar" class="section renew">
+      <div class="container">
+        <div class="center">
+          <span class="eyebrow">Renovación</span>
+          <h1 class="section-title">Renová tu licencia</h1>
+          <p class="section-sub">
+            Tu plan se renueva por un mes más. Elegí el plan y pagá con Mercado Pago:
+            tu licencia se extiende automáticamente.
+          </p>
+        </div>
+
+        <div class="plans">
+          {plans.map((p) => (
+            <article
+              class:list={['plan', { featured: p.featured, preselected: p.key === highlighted }]}
+              data-plan={p.key}
+            >
+              <span class:list={['plan-tag', { 'plan-tag--featured': p.featured }]}>{p.tag}</span>
+              <h3 class="plan-name">{p.name}</h3>
+              <p class="plan-desc">{p.desc}</p>
+              <div class="plan-price">
+                <span class="amount">{p.price}</span>
+                <span class="per">{p.per}</span>
+              </div>
+              <div class="plan-divider"></div>
+              {p.includes && (
+                <div class="plan-includes">
+                  <span class="includes-line"></span>
+                  <p class="includes-text">{p.includes}</p>
+                </div>
+              )}
+              <ul class="plan-features">
+                {p.features.map((f) => (
+                  <li>
+                    <svg class="check" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M5 12.5l4.5 4.5L19 7" />
+                    </svg>
+                    <span class="feature-text">{f.strong && <strong>{f.strong}</strong>}{f.text}</span>
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                class:list={['btn', p.featured ? 'btn-primary' : 'btn-ghost', 'plan-btn']}
+                data-plan={p.key}
+              >
+                {p.cta}
+              </button>
+            </article>
+          ))}
+        </div>
+
+        <p class="renew-note">
+          ¿Tu licencia ya venció? Pagá igual: la renovación suma 30 días desde la fecha actual.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-overlay hidden" id="emailModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Completá tu email</h3>
+      <p>Recibirás la confirmación de la renovación en este correo.</p>
+      <input type="email" id="emailInput" placeholder="tu@email.com" autocomplete="email" required />
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost btn-sm" id="cancelBtn">Cancelar</button>
+        <button type="button" class="btn btn-primary btn-sm" id="checkoutBtn">Ir a pagar</button>
+      </div>
+      <div class="loader hidden" id="loader">Procesando...</div>
+      <div class="error hidden" id="errorMsg"></div>
+    </div>
+  </div>
+
+  <Footer />
+</BaseLayout>
+
+<script>
+  const WORKER_URL = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
+  const modal = document.getElementById('emailModal');
+  const input = document.getElementById('emailInput');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const loader = document.getElementById('loader');
+  const errorMsg = document.getElementById('errorMsg');
+  let selectedPlan = '';
+
+  function openEmailModal(plan) {
+    selectedPlan = plan;
+    input.value = '';
+    errorMsg.classList.add('hidden');
+    loader.classList.add('hidden');
+    checkoutBtn.disabled = false;
+    modal.classList.remove('hidden');
+    modal.setAttribute('aria-hidden', 'false');
+    input.focus();
+  }
+
+  function closeEmailModal() {
+    modal.classList.add('hidden');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.classList.remove('hidden');
+  }
+
+  function hideError() {
+    errorMsg.classList.add('hidden');
+  }
+
+  async function startCheckout() {
+    const email = input.value.trim();
+    if (!email) { showError('Ingresá tu email'); return; }
+    if (!email.includes('@') || !email.includes('.')) { showError('Ingresá un email válido'); return; }
+
+    checkoutBtn.disabled = true;
+    loader.classList.remove('hidden');
+    hideError();
+
+    try {
+      const res = await fetch(`${WORKER_URL}/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: selectedPlan, email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al crear el pago');
+      if (data.checkout_url) {
+        window.location.href = data.checkout_url;
+      } else {
+        throw new Error('No se recibió URL de pago');
+      }
+    } catch (err) {
+      showError(err.message || 'Error de conexión');
+      checkoutBtn.disabled = false;
+      loader.classList.add('hidden');
+    }
+  }
+
+  document.querySelectorAll('[data-plan]').forEach((btn) => {
+    btn.addEventListener('click', () => openEmailModal(btn.dataset.plan));
+  });
+  checkoutBtn.addEventListener('click', startCheckout);
+  cancelBtn.addEventListener('click', closeEmailModal);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') startCheckout();
+  });
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeEmailModal();
+  });
+</script>
+
+<style>
+  .renew { background: var(--ink-50); min-height: 70vh; }
+  .renew .center .section-sub { margin: 0 auto; }
+  .renew-note {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--ink-500);
+  }
+  .plans {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: stretch;
+  }
+  .plan {
+    position: relative;
+    background: var(--white);
+    border: 1px solid var(--ink-100);
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .plan:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+  .plan.featured { border: 2px solid var(--blue-600); box-shadow: var(--shadow-lg); }
+  .plan.preselected { outline: 3px solid var(--blue-600); outline-offset: 2px; }
+  .plan-tag {
+    align-self: flex-start;
+    background: var(--ink-50);
+    color: var(--ink-700);
+    border: 1px solid var(--ink-100);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+  }
+  .plan-tag--featured { background: var(--grad); color: var(--white); border: none; }
+  .plan-name { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+  .plan-desc { color: var(--ink-500); font-size: 0.92rem; margin-bottom: 20px; }
+  .plan-price { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
+  .amount { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.02em; }
+  .plan.featured .amount { color: var(--blue-600); }
+  .per { color: var(--ink-500); font-size: 0.9rem; }
+  .plan-divider { height: 1px; background: var(--ink-100); margin: 20px 0; }
+  .plan-features { list-style: none; margin-bottom: 28px; flex: 1; }
+  .plan-features li {
+    padding: 10px 0;
+    color: var(--ink-700);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .check { color: var(--blue-600); flex-shrink: 0; margin-top: 3px; }
+  .feature-text strong { color: var(--ink-900); font-weight: 700; }
+  .plan-btn { width: 100%; }
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .modal-overlay.hidden { display: none; }
+  .modal {
+    background: var(--white);
+    padding: 32px;
+    border-radius: var(--radius);
+    width: 90%;
+    max-width: 400px;
+    box-shadow: var(--shadow-lg);
+  }
+  .modal h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 8px; }
+  .modal p { font-size: 0.9rem; color: var(--ink-500); margin-bottom: 16px; }
+  .modal input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--ink-100);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    margin-bottom: 16px;
+  }
+  .modal input:focus { outline: none; border-color: var(--blue-600); }
+  .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+  .btn-sm { padding: 10px 18px; font-size: 0.9rem; }
+  .loader { text-align: center; padding: 8px; color: var(--ink-500); font-size: 0.875rem; }
+  .error { text-align: center; padding: 8px; color: #dc2626; font-size: 0.875rem; }
+  @media (max-width: 720px) { .plans { grid-template-columns: 1fr; max-width: 420px; } }
+</style>
