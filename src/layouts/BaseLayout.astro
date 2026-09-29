@@ -38,13 +38,5 @@ const { title = 'Vendeto — Punto de Venta para tu comercio', description = 'Si
   </head>
   <body>
     <slot />
-    <script is:inline>
-      document.addEventListener('click', function (e) {
-        var el = e.target && e.target.closest ? e.target.closest('a[href*="download=1"]') : null;
-        if (el && window.fbq) {
-          fbq('track', 'Download', { link: el.href });
-        }
-      });
-    </script>
   </body>
 </html>
