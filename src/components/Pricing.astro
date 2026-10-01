@@ -111,6 +111,13 @@ const checkoutUrl = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
         </article>
       ))}
     </div>
+
+    <div class="one-time-banner">
+      <p class="one-time-text">
+        <strong>¿Estás cansado de las suscripciones?</strong> Hacé un pago único y ahorrá.
+      </p>
+      <a href="/#contacto" class="btn btn-one-time">Quiero un pago único</a>
+    </div>
   </div>
 
   <div class="modal-overlay hidden" id="emailModal" aria-hidden="true">
@@ -238,6 +245,31 @@ const checkoutUrl = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
   }
   .trial-text { font-size: 1.05rem; }
   .trial-text strong { font-weight: 800; }
+  .one-time-banner {
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    text-align: center;
+    background: var(--white);
+    border: 2px solid var(--blue-600);
+    border-radius: var(--radius);
+    padding: 22px 28px;
+    box-shadow: var(--shadow);
+  }
+  .one-time-text { font-size: 1.05rem; color: var(--ink-700); }
+  .one-time-text strong { font-weight: 800; color: var(--ink-900); }
+  .btn-one-time {
+    background: var(--grad);
+    color: var(--white);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    box-shadow: var(--shadow);
+  }
+  .btn-one-time:hover { opacity: 0.92; }
   .plans {
     margin-top: 32px;
     display: grid;
