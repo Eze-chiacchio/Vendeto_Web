@@ -3,13 +3,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 const planParam = (Astro.url.searchParams.get('plan') ?? '').toLowerCase();
+const fmt = new Intl.NumberFormat('es-AR', { maximumFractionDigits: 0 });
+const DEFAULT_MONTHS = 12;
+const DEFAULT_FACTOR = 0.8;
 const plans = [
   {
     name: 'Básico',
     key: 'basica',
     tag: 'El más elegido',
-    price: '$32.500',
-    per: '/ mes',
+    monthly: 32500,
+    price: `$${fmt.format(Math.round(32500 * DEFAULT_MONTHS * DEFAULT_FACTOR))}`,
+    original: `$${fmt.format(32500 * DEFAULT_MONTHS)}`,
+    per: `por ${DEFAULT_MONTHS} meses`,
     desc: 'Para comercios que arrancan y necesitan todas las funciones.',
     features: [
       { strong: 'Hasta 3 usuarios', text: ' trabajando en equipo' },
@@ -17,15 +22,17 @@ const plans = [
       { text: 'Todos los módulos activados' },
       { text: 'Soporte por email y WhatsApp' },
     ],
-    cta: 'Renovar Básico',
+    cta: 'Contratar Básico',
     featured: false,
   },
   {
     name: 'Avanzado',
     key: 'maxima',
     tag: 'El más completo',
-    price: '$39.990',
-    per: '/ mes',
+    monthly: 39990,
+    price: `$${fmt.format(Math.round(39990 * DEFAULT_MONTHS * DEFAULT_FACTOR))}`,
+    original: `$${fmt.format(39990 * DEFAULT_MONTHS)}`,
+    per: `por ${DEFAULT_MONTHS} meses`,
     desc: 'Todo el poder de Vendeto, sin límites de usuarios ni de productos.',
     features: [
       { strong: 'Usuarios ilimitados' },
@@ -33,27 +40,34 @@ const plans = [
       { text: 'Verificación instantánea de pagos con Mercado Pago' },
       { text: 'Soporte prioritario por email y WhatsApp' },
     ],
-    cta: 'Renovar Avanzado',
+    cta: 'Contratar Avanzado',
     featured: true,
   },
 ];
 const highlighted = plans.find((p) => p.key === planParam)?.key ?? 'maxima';
 ---
 <BaseLayout
-  title="Renová tu licencia — Vendeto"
-  description="Renová tu licencia de Vendeto para seguir usando el sistema sin interrupciones."
+  title="Licencias extendidas — Vendeto"
+  description="Comprá 6, 12 o 36 meses de Vendeto en un solo pago y ahorrá hasta 33%."
 >
   <Header />
   <main>
-    <section id="renovar" class="section renew">
+    <section id="licencias" class="section renew">
       <div class="container">
         <div class="center">
-          <span class="eyebrow">Renovación</span>
-          <h1 class="section-title">Renová tu licencia</h1>
+          <span class="eyebrow">Licencias extendidas</span>
+          <h1 class="section-title">Licencias extendidas</h1>
           <p class="section-sub">
-            Tu plan se renueva por un mes más. Elegí el plan y pagá con Mercado Pago:
-            tu licencia se extiende automáticamente.
+            Comprá 6, 12 o 36 meses de una vez y ahorrá hasta 33%. Un solo pago, sin suscripciones mensuales.
           </p>
+        </div>
+
+        <div class="billing-toggle-wrap">
+          <div class="billing-toggle" role="group" aria-label="Duración de la licencia">
+            <button type="button" class="billing-option" data-months="6">6 meses <span class="billing-save">-10%</span></button>
+            <button type="button" class="billing-option active" data-months="12">12 meses <span class="billing-save">-20%</span></button>
+            <button type="button" class="billing-option" data-months="36">36 meses <span class="billing-save">-33%</span></button>
+          </div>
         </div>
 
         <div class="plans">
@@ -61,6 +75,7 @@ const highlighted = plans.find((p) => p.key === planParam)?.key ?? 'maxima';
             <article
               class:list={['plan', { featured: p.featured, preselected: p.key === highlighted }]}
               data-plan={p.key}
+              data-monthly={p.monthly}
             >
               <span class:list={['plan-tag', { 'plan-tag--featured': p.featured }]}>{p.tag}</span>
               <h3 class="plan-name">{p.name}</h3>
@@ -69,13 +84,11 @@ const highlighted = plans.find((p) => p.key === planParam)?.key ?? 'maxima';
                 <span class="amount">{p.price}</span>
                 <span class="per">{p.per}</span>
               </div>
+              <div class="plan-save">
+                <span class="save-original">{p.original}</span>
+                <span class="save-badge">Ahorrás 20%</span>
+              </div>
               <div class="plan-divider"></div>
-              {p.includes && (
-                <div class="plan-includes">
-                  <span class="includes-line"></span>
-                  <p class="includes-text">{p.includes}</p>
-                </div>
-              )}
               <ul class="plan-features">
                 {p.features.map((f) => (
                   <li>
@@ -97,15 +110,8 @@ const highlighted = plans.find((p) => p.key === planParam)?.key ?? 'maxima';
           ))}
         </div>
 
-        <div class="one-time-banner">
-          <p class="one-time-text">
-            <strong>¿Cansado de las suscripciones?</strong> Revisá nuestras licencias extendidas:
-          </p>
-          <a href="/licencias-largas" class="btn btn-one-time">Ver licencias extendidas</a>
-        </div>
-
         <p class="renew-note">
-          ¿Tu licencia ya venció? Pagá igual: la renovación suma 30 días desde la fecha actual.
+          Tu licencia se activa al confirmar el pago y recibís tu clave por email.
         </p>
       </div>
     </section>
@@ -114,7 +120,7 @@ const highlighted = plans.find((p) => p.key === planParam)?.key ?? 'maxima';
   <div class="modal-overlay hidden" id="emailModal" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <h3 id="modalTitle">Completá tu email</h3>
-      <p>Recibirás la confirmación de la renovación en este correo.</p>
+      <p>Recibirás tu clave de licencia en este correo después del pago.</p>
       <input type="email" id="emailInput" placeholder="tu@email.com" autocomplete="email" required />
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost btn-sm" id="cancelBtn">Cancelar</button>
@@ -137,6 +143,13 @@ const highlighted = plans.find((p) => p.key === planParam)?.key ?? 'maxima';
   const loader = document.getElementById('loader');
   const errorMsg = document.getElementById('errorMsg');
   let selectedPlan = '';
+  const fmt = new Intl.NumberFormat('es-AR', { maximumFractionDigits: 0 });
+  const DURATIONS = {
+    6: { factor: 0.9, save: 'Ahorrás 10%' },
+    12: { factor: 0.8, save: 'Ahorrás 20%' },
+    36: { factor: 0.67, save: 'Ahorrás 33%' },
+  };
+  let durationMonths = 12;
 
   function openEmailModal(plan) {
     selectedPlan = plan;
@@ -176,7 +189,7 @@ const highlighted = plans.find((p) => p.key === planParam)?.key ?? 'maxima';
       const res = await fetch(`${WORKER_URL}/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: selectedPlan, email }),
+        body: JSON.stringify({ plan: selectedPlan, email, duration_months: durationMonths }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Error al crear el pago');
@@ -192,8 +205,33 @@ const highlighted = plans.find((p) => p.key === planParam)?.key ?? 'maxima';
     }
   }
 
+  function updatePrices() {
+    const { factor, save } = DURATIONS[durationMonths];
+    document.querySelectorAll('[data-monthly]').forEach((article) => {
+      const monthly = Number(article.dataset.monthly);
+      if (!monthly) return;
+      const amountEl = article.querySelector('.amount');
+      const perEl = article.querySelector('.per');
+      const originalEl = article.querySelector('.save-original');
+      const badgeEl = article.querySelector('.save-badge');
+      const original = monthly * durationMonths;
+      const total = Math.round(original * factor);
+      amountEl.textContent = `$${fmt.format(total)}`;
+      perEl.textContent = `por ${durationMonths} meses`;
+      originalEl.textContent = `$${fmt.format(original)}`;
+      badgeEl.textContent = save;
+    });
+  }
+
   document.querySelectorAll('[data-plan]').forEach((btn) => {
     btn.addEventListener('click', () => openEmailModal(btn.dataset.plan));
+  });
+  document.querySelectorAll('.billing-option').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      durationMonths = Number(btn.dataset.months);
+      document.querySelectorAll('.billing-option').forEach((b) => b.classList.toggle('active', b === btn));
+      updatePrices();
+    });
   });
   checkoutBtn.addEventListener('click', startCheckout);
   cancelBtn.addEventListener('click', closeEmailModal);
@@ -214,34 +252,42 @@ const highlighted = plans.find((p) => p.key === planParam)?.key ?? 'maxima';
     font-size: 0.85rem;
     color: var(--ink-500);
   }
-  .one-time-banner {
-    margin-top: 32px;
-    display: flex;
+  .billing-toggle-wrap { margin-top: 32px; text-align: center; }
+  .billing-toggle {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    text-align: center;
+    gap: 4px;
     background: var(--white);
-    border: 2px solid var(--blue-600);
-    border-radius: var(--radius);
-    padding: 22px 28px;
+    border: 1px solid var(--ink-100);
+    border-radius: 999px;
+    padding: 5px;
     box-shadow: var(--shadow);
-    max-width: 760px;
-    margin-left: auto;
-    margin-right: auto;
   }
-  .one-time-text { font-size: 1.05rem; color: var(--ink-700); }
-  .one-time-text strong { font-weight: 800; color: var(--ink-900); }
-  .btn-one-time {
-    background: var(--grad);
+  .billing-option {
+    border: none;
+    background: transparent;
+    color: var(--ink-700);
+    font-weight: 600;
+    font-size: 0.95rem;
+    font-family: inherit;
+    padding: 9px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .billing-option.active { background: var(--grad); color: var(--white); }
+  .billing-save {
+    background: var(--blue-600);
     color: var(--white);
-    padding: 12px 24px;
-    border-radius: 12px;
+    font-size: 0.72rem;
     font-weight: 700;
-    box-shadow: var(--shadow);
+    padding: 2px 8px;
+    border-radius: 999px;
   }
-  .btn-one-time:hover { opacity: 0.92; }
+  .billing-option.active .billing-save { background: var(--white); color: var(--blue-600); }
   .plans {
     margin-top: 40px;
     display: grid;
@@ -286,6 +332,21 @@ const highlighted = plans.find((p) => p.key === planParam)?.key ?? 'maxima';
   .amount { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.02em; }
   .plan.featured .amount { color: var(--blue-600); }
   .per { color: var(--ink-500); font-size: 0.9rem; }
+  .plan-save {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .save-original { color: var(--ink-500); text-decoration: line-through; font-size: 0.95rem; }
+  .save-badge {
+    background: rgba(37, 99, 235, 0.08);
+    color: var(--blue-600);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
   .plan-divider { height: 1px; background: var(--ink-100); margin: 20px 0; }
   .plan-features { list-style: none; margin-bottom: 28px; flex: 1; }
   .plan-features li {
