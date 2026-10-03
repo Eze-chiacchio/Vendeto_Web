@@ -6,7 +6,6 @@ const plans = [
     tag: 'Ideal para probar',
     price: '$0',
     per: 'al vencer la prueba',
-    monthly: null,
     desc: 'Seguí usando Vendeto gratis, con lo esencial para tu día a día.',
     features: [
       { strong: '1 solo usuario', text: ' con acceso completo' },
@@ -23,7 +22,6 @@ const plans = [
     tag: 'El más elegido',
     price: '$32.500',
     per: '/ mes',
-    monthly: 32500,
     desc: 'Para comercios que arrancan y necesitan todas las funciones.',
     includes: 'Incluye todo lo del plan Gratuito, más:',
     features: [
@@ -41,7 +39,6 @@ const plans = [
     tag: 'El más completo',
     price: '$39.990',
     per: '/ mes',
-    monthly: 39990,
     desc: 'Todo el poder de Vendeto, sin límites de usuarios ni de productos.',
     includes: 'Incluye todo lo del plan Básico, más:',
     features: [
@@ -66,13 +63,6 @@ const checkoutUrl = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
       </p>
     </div>
 
-    <div class="billing-toggle-wrap">
-      <div class="billing-toggle" role="group" aria-label="Duración del plan">
-        <button type="button" class="billing-option active" data-months="1">Mensual</button>
-        <button type="button" class="billing-option" data-months="6">6 meses <span class="billing-save">-10%</span></button>
-      </div>
-    </div>
-
     <div class="trial-banner">
       <span class="trial-badge">Prueba gratuita</span>
       <p class="trial-text">Probá el plan <strong>Avanzado</strong> gratis durante 7 días.</p>
@@ -80,7 +70,7 @@ const checkoutUrl = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
 
     <div class="plans">
       {plans.map((p) => (
-        <article class:list={['plan', { featured: p.featured }]} {...(p.monthly != null ? { 'data-monthly': p.monthly } : {})}>
+        <article class:list={['plan', { featured: p.featured }]}>
           <span class:list={['plan-tag', { 'plan-tag--featured': p.featured }]}>{p.tag}</span>
           <h3 class="plan-name">{p.name}</h3>
           <p class="plan-desc">{p.desc}</p>
@@ -88,12 +78,6 @@ const checkoutUrl = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
             <span class="amount">{p.price}</span>
             <span class="per">{p.per}</span>
           </div>
-          {p.monthly && (
-            <div class="plan-save hidden">
-              <span class="save-original"></span>
-              <span class="save-badge">Ahorrás 10%</span>
-            </div>
-          )}
           <div class="plan-divider"></div>
           {p.includes && (
             <div class="plan-includes">
@@ -166,8 +150,6 @@ const checkoutUrl = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
   const loader = document.getElementById('loader');
   const errorMsg = document.getElementById('errorMsg');
   let selectedPlan = '';
-  const fmt = new Intl.NumberFormat('es-AR', { maximumFractionDigits: 0 });
-  let billingMonths = 1;
 
   function openEmailModal(plan) {
     selectedPlan = plan;
@@ -207,7 +189,7 @@ const checkoutUrl = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
       const res = await fetch(`${WORKER_URL}/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: selectedPlan, email, duration_months: billingMonths }),
+        body: JSON.stringify({ plan: selectedPlan, email }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Error al crear el pago');
@@ -233,37 +215,6 @@ const checkoutUrl = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
   });
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closeEmailModal();
-  });
-
-  function updatePrices() {
-    document.querySelectorAll('[data-monthly]').forEach((article) => {
-      const monthly = Number(article.dataset.monthly);
-      if (!monthly) return;
-      const amountEl = article.querySelector('.amount');
-      const perEl = article.querySelector('.per');
-      const saveEl = article.querySelector('.plan-save');
-      const originalEl = article.querySelector('.save-original');
-      if (billingMonths === 1) {
-        amountEl.textContent = `$${fmt.format(monthly)}`;
-        perEl.textContent = '/ mes';
-        saveEl.classList.add('hidden');
-      } else {
-        const original = monthly * billingMonths;
-        const total = Math.round(original * 0.9);
-        amountEl.textContent = `$${fmt.format(total)}`;
-        perEl.textContent = `por ${billingMonths} meses`;
-        originalEl.textContent = `$${fmt.format(original)}`;
-        saveEl.classList.remove('hidden');
-      }
-    });
-  }
-
-  document.querySelectorAll('.billing-option').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      billingMonths = Number(btn.dataset.months);
-      document.querySelectorAll('.billing-option').forEach((b) => b.classList.toggle('active', b === btn));
-      updatePrices();
-    });
   });
 </script>
 
@@ -319,58 +270,6 @@ const checkoutUrl = 'https://posweb-licensing.chiacchio-eze01.workers.dev';
     box-shadow: var(--shadow);
   }
   .btn-one-time:hover { opacity: 0.92; }
-  .billing-toggle-wrap { margin-top: 28px; text-align: center; }
-  .billing-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: var(--white);
-    border: 1px solid var(--ink-100);
-    border-radius: 999px;
-    padding: 5px;
-    box-shadow: var(--shadow);
-  }
-  .billing-option {
-    border: none;
-    background: transparent;
-    color: var(--ink-700);
-    font-weight: 600;
-    font-size: 0.95rem;
-    font-family: inherit;
-    padding: 9px 20px;
-    border-radius: 999px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: background 0.15s ease, color 0.15s ease;
-  }
-  .billing-option.active { background: var(--grad); color: var(--white); }
-  .billing-save {
-    background: var(--blue-600);
-    color: var(--white);
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 999px;
-  }
-  .billing-option.active .billing-save { background: var(--white); color: var(--blue-600); }
-  .plan-save {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 8px;
-  }
-  .plan-save.hidden { display: none; }
-  .save-original { color: var(--ink-500); text-decoration: line-through; font-size: 0.95rem; }
-  .save-badge {
-    background: rgba(37, 99, 235, 0.08);
-    color: var(--blue-600);
-    font-size: 0.78rem;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 999px;
-  }
   .plans {
     margin-top: 32px;
     display: grid;
