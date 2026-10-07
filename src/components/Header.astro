@@ -8,9 +8,28 @@ const links = [
 ---
 <header class="header">
   <nav class="container nav">
-    <a href="/#inicio" class="brand">
-      <img src="/images/logo.png" alt="Vendeto" class="brand-logo" />
-    </a>
+    <div class="nav-left">
+      <div class="hamburger-menu">
+        <button
+          type="button"
+          class="hamburger"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="hamburger-dropdown"
+        >
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="hamburger-dropdown" id="hamburger-dropdown">
+          {links.map((l) => (
+            <li><a href={l.href}>{l.label}</a></li>
+          ))}
+          <li><a href="/renovar" class="dropdown-renovar">Renovar licencia</a></li>
+        </ul>
+      </div>
+      <a href="/#inicio" class="brand">
+        <img src="/images/logo.png" alt="Vendeto" class="brand-logo" />
+      </a>
+    </div>
     <ul class="nav-links">
       {links.map((l) => (
         <li><a href={l.href}>{l.label}</a></li>
@@ -19,6 +38,30 @@ const links = [
     <a href="/api/latest?download=1" class="btn btn-primary nav-cta">Descargar</a>
   </nav>
 </header>
+
+<script is:inline>
+  (function () {
+    var btn = document.querySelector('.hamburger');
+    var dropdown = document.getElementById('hamburger-dropdown');
+    if (!btn || !dropdown) return;
+
+    function close() {
+      dropdown.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = dropdown.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    document.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
+  })();
+</script>
 
 <style>
   .header {
@@ -34,6 +77,75 @@ const links = [
     align-items: center;
     justify-content: space-between;
     height: 72px;
+  }
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hamburger-menu { position: relative; }
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    border: 1px solid var(--ink-100);
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .hamburger:hover { border-color: var(--ink-500); }
+  .hamburger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    border-radius: 2px;
+    background: var(--ink-700);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .hamburger[aria-expanded='true'] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+  .hamburger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .hamburger-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    z-index: 60;
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 220px;
+    margin: 0;
+    padding: 8px;
+    list-style: none;
+    background: #fff;
+    border: 1px solid var(--ink-100);
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+  }
+  .hamburger-dropdown.open { display: flex; }
+  .hamburger-dropdown a {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--ink-700);
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  .hamburger-dropdown a:hover {
+    background: var(--ink-50);
+    color: var(--blue-600);
+  }
+  .hamburger-dropdown .dropdown-renovar {
+    color: var(--blue-600);
+    border-top: 1px solid var(--ink-100);
+    margin-top: 4px;
+    padding-top: 12px;
+    border-radius: 0 0 8px 8px;
   }
   .brand-logo {
     height: 40px;
