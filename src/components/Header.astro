@@ -8,18 +8,21 @@ const links = [
 ---
 <header class="header">
   <nav class="container nav">
-    <button
-      type="button"
-      class="hamburger"
-      aria-label="Abrir menú"
-      aria-expanded="false"
-      aria-controls="hamburger-drawer"
-    >
-      <span></span><span></span><span></span>
-    </button>
-    <a href="/#inicio" class="brand">
-      <img src="/images/logo.png" alt="Vendeto" class="brand-logo" />
-    </a>
+    <div class="nav-left">
+      <button
+        type="button"
+        class="hamburger"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="hamburger-drawer"
+      >
+        <span></span><span></span><span></span>
+      </button>
+      <a href="/#inicio" class="brand">
+        <img src="/images/logo.png" alt="Vendeto" class="brand-logo" />
+      </a>
+    </div>
+    <a href="/api/latest?download=1" class="btn btn-primary nav-cta">Descargar</a>
   </nav>
 </header>
 
@@ -89,8 +92,14 @@ const links = [
   .nav {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 14px;
     height: 72px;
+  }
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
   }
   .hamburger {
     display: flex;
