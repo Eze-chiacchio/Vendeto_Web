@@ -8,55 +8,69 @@ const links = [
 ---
 <header class="header">
   <nav class="container nav">
-    <div class="nav-left">
-      <div class="hamburger-menu">
-        <button
-          type="button"
-          class="hamburger"
-          aria-label="Abrir menú"
-          aria-expanded="false"
-          aria-controls="hamburger-dropdown"
-        >
-          <span></span><span></span><span></span>
-        </button>
-        <ul class="hamburger-dropdown" id="hamburger-dropdown">
-          {links.map((l) => (
-            <li><a href={l.href}>{l.label}</a></li>
-          ))}
-          <li><a href="/renovar" class="dropdown-renovar">Renovar licencia</a></li>
-        </ul>
-      </div>
-      <a href="/#inicio" class="brand">
-        <img src="/images/logo.png" alt="Vendeto" class="brand-logo" />
-      </a>
-    </div>
-    <ul class="nav-links">
-      {links.map((l) => (
-        <li><a href={l.href}>{l.label}</a></li>
-      ))}
-    </ul>
-    <a href="/api/latest?download=1" class="btn btn-primary nav-cta">Descargar</a>
+    <button
+      type="button"
+      class="hamburger"
+      aria-label="Abrir menú"
+      aria-expanded="false"
+      aria-controls="hamburger-drawer"
+    >
+      <span></span><span></span><span></span>
+    </button>
+    <a href="/#inicio" class="brand">
+      <img src="/images/logo.png" alt="Vendeto" class="brand-logo" />
+    </a>
   </nav>
 </header>
+
+<div class="drawer-backdrop" id="hamburger-backdrop"></div>
+<aside class="drawer" id="hamburger-drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <a href="/#inicio" class="brand">
+      <img src="/images/logo.png" alt="Vendeto" class="brand-logo" />
+    </a>
+    <button type="button" class="drawer-close" aria-label="Cerrar menú">
+      <span></span><span></span>
+    </button>
+  </div>
+  <ul class="drawer-links">
+    {links.map((l) => (
+      <li><a href={l.href}>{l.label}</a></li>
+    ))}
+    <li><a href="/renovar" class="drawer-renovar">Renovar licencia</a></li>
+  </ul>
+</aside>
 
 <script is:inline>
   (function () {
     var btn = document.querySelector('.hamburger');
-    var dropdown = document.getElementById('hamburger-dropdown');
-    if (!btn || !dropdown) return;
+    var drawer = document.getElementById('hamburger-drawer');
+    var backdrop = document.getElementById('hamburger-backdrop');
+    var closeBtn = document.querySelector('.drawer-close');
+    if (!btn || !drawer || !backdrop) return;
 
-    function close() {
-      dropdown.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
+    function open() {
+      drawer.classList.add('open');
+      backdrop.classList.add('open');
+      drawer.setAttribute('aria-hidden', 'false');
+      btn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
     }
 
-    btn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      var open = dropdown.classList.toggle('open');
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
+    function close() {
+      drawer.classList.remove('open');
+      backdrop.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+      btn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
 
-    document.addEventListener('click', close);
+    btn.addEventListener('click', open);
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    backdrop.addEventListener('click', close);
+    drawer.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', close);
+    });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') close();
     });
@@ -75,15 +89,9 @@ const links = [
   .nav {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 14px;
     height: 72px;
   }
-  .nav-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .hamburger-menu { position: relative; }
   .hamburger {
     display: flex;
     flex-direction: column;
@@ -105,65 +113,99 @@ const links = [
     width: 100%;
     border-radius: 2px;
     background: var(--ink-700);
-    transition: transform 0.2s ease, opacity 0.2s ease;
-  }
-  .hamburger[aria-expanded='true'] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  .hamburger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
-  .hamburger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-  .hamburger-dropdown {
-    position: absolute;
-    top: calc(100% + 10px);
-    left: 0;
-    z-index: 60;
-    display: none;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 220px;
-    margin: 0;
-    padding: 8px;
-    list-style: none;
-    background: #fff;
-    border: 1px solid var(--ink-100);
-    border-radius: 14px;
-    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
-  }
-  .hamburger-dropdown.open { display: flex; }
-  .hamburger-dropdown a {
-    display: block;
-    padding: 10px 12px;
-    border-radius: 8px;
-    color: var(--ink-700);
-    font-weight: 500;
-    font-size: 0.95rem;
-  }
-  .hamburger-dropdown a:hover {
-    background: var(--ink-50);
-    color: var(--blue-600);
-  }
-  .hamburger-dropdown .dropdown-renovar {
-    color: var(--blue-600);
-    border-top: 1px solid var(--ink-100);
-    margin-top: 4px;
-    padding-top: 12px;
-    border-radius: 0 0 8px 8px;
   }
   .brand-logo {
     height: 40px;
     width: auto;
     display: block;
   }
-  .nav-links {
+
+  .drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(15, 23, 42, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  .drawer-backdrop.open { opacity: 1; visibility: visible; }
+
+  .drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
     display: flex;
-    gap: 32px;
+    flex-direction: column;
+    width: min(320px, 85vw);
+    height: 100%;
+    padding: 20px;
+    background: #fff;
+    border-right: 1px solid var(--ink-100);
+    box-shadow: 0 0 40px rgba(15, 23, 42, 0.15);
+    overflow-y: auto;
+    transform: translateX(-105%);
+    transition: transform 0.3s ease;
+  }
+  .drawer.open { transform: translateX(0); }
+
+  .drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--ink-100);
+  }
+  .drawer-close {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 10px;
+    background: var(--ink-50);
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .drawer-close:hover { background: var(--ink-100); }
+  .drawer-close span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--ink-700);
+  }
+  .drawer-close span:nth-child(1) { transform: translate(-50%, -50%) rotate(45deg); }
+  .drawer-close span:nth-child(2) { transform: translate(-50%, -50%) rotate(-45deg); }
+
+  .drawer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 20px;
+    padding: 0;
     list-style: none;
   }
-  .nav-links a {
+  .drawer-links a {
+    display: block;
+    padding: 14px 12px;
+    border-radius: 10px;
     color: var(--ink-700);
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
+    transition: background 0.2s ease, color 0.2s ease;
   }
-  .nav-links a:hover { color: var(--blue-600); }
-  @media (max-width: 720px) {
-    .nav-links { display: none; }
+  .drawer-links a:hover {
+    background: var(--ink-50);
+    color: var(--blue-600);
+  }
+  .drawer-links .drawer-renovar {
+    margin-top: 8px;
+    color: var(--blue-600);
+    border-top: 1px solid var(--ink-100);
+    border-radius: 0 0 10px 10px;
+    padding-top: 20px;
   }
 </style>
