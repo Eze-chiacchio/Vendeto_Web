@@ -24,7 +24,7 @@ const stats = [
       </div>
     </div>
     <div class="hero-visual">
-      <img src="/images/logo-miniaturas.png" alt="Vendeto en acción" class="hero-shot" loading="eager" />
+      <img src="/images/logo-hero.png" alt="Vendeto" class="hero-shot" loading="eager" />
     </div>
   </div>
   <div class="container stats">
@@ -62,12 +62,11 @@ const stats = [
     margin-bottom: 32px;
   }
   .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
-  .hero-visual { position: relative; }
+  .hero-visual { position: relative; display: flex; justify-content: center; }
   .hero-shot {
     width: 100%;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--ink-100);
+    max-width: 460px;
+    height: auto;
   }
   .stats {
     margin-top: 80px;
