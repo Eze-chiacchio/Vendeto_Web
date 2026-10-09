@@ -40,7 +40,7 @@ const links = [
     {links.map((l) => (
       <li><a href={l.href}>{l.label}</a></li>
     ))}
-    <li><a href="/licencias-largas">Licencias largas</a></li>
+    <li><a href="/licencias-largas" class="drawer-licencias">Licencias largas</a></li>
     <li><a href="/renovar" class="drawer-renovar">Renovar licencia</a></li>
   </ul>
 </aside>
@@ -211,11 +211,13 @@ const links = [
     background: var(--ink-50);
     color: var(--blue-600);
   }
-  .drawer-links .drawer-renovar {
-    margin-top: 8px;
+  .drawer-links .drawer-renovar,
+  .drawer-links .drawer-licencias {
+    display: block;
     color: var(--blue-600);
     border-top: 1px solid var(--ink-100);
-    border-radius: 0 0 10px 10px;
+    border-radius: 10px;
     padding-top: 20px;
   }
+  .drawer-links .drawer-renovar { margin-top: 8px; }
 </style>
