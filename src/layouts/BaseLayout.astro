@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Analytics from '@vercel/analytics/astro';
 interface Props {
   title?: string;
   description?: string;
@@ -35,6 +36,7 @@ const { title = 'Vendeto — Punto de Venta para tu comercio', description = 'Si
     src="https://www.facebook.com/tr?id=2521342231676792&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Meta Pixel Code -->
+    <Analytics />
   </head>
   <body>
     <slot />
