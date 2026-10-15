@@ -1,0 +1,233 @@
+---
+const INSTALLER_URL = 'https://posweb-mailer.chiacchio-eze01.workers.dev/installer';
+---
+
+<div class="installer-modal" id="installer-modal" aria-hidden="true">
+  <div class="installer-backdrop" data-installer-close></div>
+  <div class="installer-card" role="dialog" aria-modal="true" aria-labelledby="installer-title">
+    <button type="button" class="installer-close" data-installer-close aria-label="Cerrar">
+      <span></span><span></span>
+    </button>
+    <span class="eyebrow">Descarga para PC</span>
+    <h3 id="installer-title" class="installer-title">Recibí el instalador por email</h3>
+    <p class="installer-sub">
+      Vendeto se instala en una PC Windows. Dejanos tu email y te enviamos el enlace
+      de descarga para abrirlo en tu computadora.
+    </p>
+    <form class="installer-form" data-installer-form>
+      <div class="field">
+        <label for="installer-email">Email</label>
+        <input
+          id="installer-email"
+          name="email"
+          type="email"
+          required
+          autocomplete="email"
+          placeholder="tu@email.com"
+        />
+      </div>
+      <button type="submit" class="btn btn-primary installer-submit" data-installer-submit>
+        Enviarme el instalador
+      </button>
+      <p class="installer-status" data-installer-status role="status" aria-live="polite"></p>
+    </form>
+    <a
+      href="https://wa.me/5491138663629?text=Hola%2C%20quiero%20el%20instalador%20de%20Vendeto"
+      target="_blank"
+      rel="noopener"
+      class="installer-wa"
+    >
+      ¿Preferís WhatsApp? Escribinos
+    </a>
+  </div>
+</div>
+
+<script define:vars={{ INSTALLER_URL }}>
+  (function () {
+    var DOWNLOAD_SELECTOR = 'a[href*="download=1"]';
+    var modal = document.getElementById('installer-modal');
+    var form = document.querySelector('[data-installer-form]');
+    var submit = document.querySelector('[data-installer-submit]');
+    var status = document.querySelector('[data-installer-status]');
+    if (!modal || !form) return;
+
+    var esMovil =
+      window.matchMedia('(pointer: coarse)').matches ||
+      /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
+    function setStatus(message, kind) {
+      if (!status) return;
+      status.textContent = message || '';
+      status.className = 'installer-status' + (kind ? ' installer-status-' + kind : '');
+    }
+
+    function open() {
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      var input = form.querySelector('input[name="email"]');
+      if (input) setTimeout(function () { input.focus(); }, 60);
+    }
+
+    function close() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    modal.querySelectorAll('[data-installer-close]').forEach(function (el) {
+      el.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal.classList.contains('open')) close();
+    });
+
+    if (esMovil) {
+      document.querySelectorAll(DOWNLOAD_SELECTOR).forEach(function (a) {
+        a.textContent = 'Recibirlo por email';
+      });
+    }
+
+    document.addEventListener(
+      'click',
+      function (e) {
+        var el = e.target && e.target.closest ? e.target.closest(DOWNLOAD_SELECTOR) : null;
+        if (!el || !esMovil) return;
+        e.preventDefault();
+        e.stopPropagation();
+        setStatus('');
+        open();
+      },
+      true
+    );
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (!submit) return;
+
+      var email = form.email.value.trim();
+      if (!email) {
+        setStatus('Ingresá tu email.', 'error');
+        return;
+      }
+
+      submit.disabled = true;
+      submit.textContent = 'Enviando...';
+      setStatus('');
+
+      try {
+        var res = await fetch(INSTALLER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email }),
+        });
+        var data = await res.json().catch(function () { return {}; });
+        if (!res.ok) throw new Error(data.error || 'No pudimos enviar el email');
+        if (window.fbq) window.fbq('track', 'Lead', { source: 'installer_email' });
+        form.reset();
+        setStatus('¡Listo! Revisá tu casilla y abrí el enlace desde tu PC.', 'success');
+      } catch (err) {
+        setStatus(err.message || 'Ocurrió un error. Intentá de nuevo.', 'error');
+      } finally {
+        submit.disabled = false;
+        submit.textContent = 'Enviarme el instalador';
+      }
+    });
+  })();
+</script>
+
+<style>
+  .installer-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+  .installer-modal.open { opacity: 1; visibility: visible; }
+  .installer-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+  }
+  .installer-card {
+    position: relative;
+    width: min(440px, 100%);
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 32px 28px;
+    transform: translateY(16px);
+    transition: transform 0.25s ease;
+  }
+  .installer-modal.open .installer-card { transform: translateY(0); }
+  .installer-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 10px;
+    background: var(--ink-50);
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .installer-close:hover { background: var(--ink-100); }
+  .installer-close span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--ink-700);
+  }
+  .installer-close span:nth-child(1) { transform: translate(-50%, -50%) rotate(45deg); }
+  .installer-close span:nth-child(2) { transform: translate(-50%, -50%) rotate(-45deg); }
+  .installer-title { font-size: 1.4rem; margin-bottom: 10px; }
+  .installer-sub { color: var(--ink-500); font-size: 0.98rem; margin-bottom: 22px; }
+  .installer-form .field { margin-bottom: 16px; }
+  .installer-form .field label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink-700);
+    margin-bottom: 8px;
+  }
+  .installer-form .field input {
+    width: 100%;
+    border: 1px solid var(--ink-100);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--ink-900);
+    background: var(--ink-50);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .installer-form .field input:focus {
+    outline: none;
+    border-color: var(--blue-600);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    background: var(--white);
+  }
+  .installer-submit { width: 100%; }
+  .installer-status { margin-top: 14px; font-size: 0.9rem; }
+  .installer-status-success { color: #16a34a; }
+  .installer-status-error { color: #dc2626; }
+  .installer-wa {
+    display: block;
+    margin-top: 18px;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--blue-600);
+  }
+  .installer-wa:hover { text-decoration: underline; }
+</style>

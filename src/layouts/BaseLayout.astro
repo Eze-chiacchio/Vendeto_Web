@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Analytics from '@vercel/analytics/astro';
+import MobileInstaller from '../components/MobileInstaller.astro';
 interface Props {
   title?: string;
   description?: string;
@@ -40,6 +41,7 @@ const { title = 'Vendeto — Punto de Venta para tu comercio', description = 'Si
   </head>
   <body>
     <slot />
+    <MobileInstaller />
     <script is:inline>
       document.addEventListener('click', function (e) {
         var el = e.target && e.target.closest ? e.target.closest('a[href*="download=1"]') : null;
