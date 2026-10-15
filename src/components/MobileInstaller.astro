@@ -82,12 +82,6 @@ const INSTALLER_URL = 'https://posweb-mailer.chiacchio-eze01.workers.dev/install
       if (e.key === 'Escape' && modal.classList.contains('open')) close();
     });
 
-    if (esMovil) {
-      document.querySelectorAll(DOWNLOAD_SELECTOR).forEach(function (a) {
-        a.textContent = 'Recibirlo por email';
-      });
-    }
-
     document.addEventListener(
       'click',
       function (e) {
